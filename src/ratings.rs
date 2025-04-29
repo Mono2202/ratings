@@ -12,11 +12,33 @@ pub struct Rating {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-#[serde(tag = "type")]
+#[serde(tag="type")]
 pub enum RatingType {
+    #[serde(rename="album")]
     Album {
         artist: String,
     },
+}
+
+// Unfortunately, `serde(flatten)` doesn't work on CSV serialization.
+// That is why this workaround is needed :(
+impl Rating {
+    pub fn to_csv_record(&self) -> Vec<String> {
+        let mut csv_record = vec![
+            self.name.clone(),
+            self.icon.clone(),
+            self.rating.to_string(),
+        ];
+
+        match &self.rating_type {
+            RatingType::Album {artist} => {
+                csv_record.push(artist.clone());
+                csv_record.push("album".into());
+            }
+        }
+
+        csv_record
+    }
 }
 
 impl fmt::Display for Rating {

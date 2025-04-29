@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::path::Path;
 use csv;
 
@@ -16,4 +16,13 @@ pub fn read_ratings<P: AsRef<Path>>(path: P) -> Result<Vec<Rating>> {
     }
 
     Ok(ratings)
+}
+
+pub fn write_ratings<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
+    let ratings_file = OpenOptions::new().append(true).open(&path).with_context(|| format!("Failed to open ratings file: {}", path.as_ref().display()))?;
+    let mut csv_writer = csv::WriterBuilder::new().has_headers(false).from_writer(ratings_file);
+
+    csv_writer.serialize(&rating.to_csv_record()).with_context(|| format!("Failed to serialize a record to the CSV"))?;
+    csv_writer.flush().with_context(|| format!("Failed to flush CSV file"))?;
+    Ok(())
 }
