@@ -1,8 +1,8 @@
-mod csv_parser;
+mod csv_manager;
 mod ratings;
 
 use anyhow::Result;
-use csv_parser::{read_ratings, write_ratings};
+use csv_manager::{read_ratings, write_ratings};
 use ratings::{Rating, RatingType};
 
 fn main() -> Result<()>{

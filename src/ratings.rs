@@ -20,7 +20,7 @@ pub enum RatingType {
     },
 }
 
-// Unfortunately, `serde(flatten)` doesn't work on CSV serialization.
+// Unfortunately, `serde(flatten)` doesn't work with CSV serialization.
 // That is why this workaround is needed :(
 impl Rating {
     pub fn to_csv_record(&self) -> Vec<String> {
