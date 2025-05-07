@@ -13,8 +13,10 @@ pub enum Commands {
     Add {
         category: String,
         name: String,
-        icon: String,
         rating: i8,
         properties: Vec<String>,
-    }
+    },
+    Show {
+        category: String,
+    },
 }

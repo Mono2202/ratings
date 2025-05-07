@@ -1,11 +1,9 @@
 use serde::{Serialize, Deserialize};
-use clap::ValueEnum;
 use std::fmt;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Rating {
     pub name: String,
-    pub icon: String,
     pub rating: i8,
 
     #[serde(flatten)]
@@ -27,7 +25,6 @@ impl Rating {
     pub fn to_csv_record(&self) -> Vec<String> {
         let mut csv_record = vec![
             self.name.clone(),
-            self.icon.clone(),
             self.rating.to_string(),
         ];
 
@@ -44,11 +41,25 @@ impl Rating {
 
 impl fmt::Display for Rating {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let rating_stars = "⭐".repeat(self.rating as usize);
         match &self.rating_type {
             RatingType::Album { artist } => {
-                write!(f, "{} {} by {} [{}]", self.icon, self.name, artist, rating_stars)
+                write!(f, "{} by {}", self.name, artist)
             }
         }
+    }
+}
+
+pub fn display_ratings(ratings: &Vec<Rating>) {
+    let max_dislay_rating_len = ratings.iter().map(|r| format!("{}", r).len()).max().unwrap_or(0);
+
+    for rating in ratings {
+        let stars = format!(
+            "{}{}",
+            "★".repeat(rating.rating as usize),
+            "☆".repeat(10 - rating.rating as usize)
+        );
+        let display_rating = format!("{}", rating);
+        let padding = max_dislay_rating_len - display_rating.len();
+        println!("{} {} {}", rating, " ".repeat(padding), stars);
     }
 }
