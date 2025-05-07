@@ -19,11 +19,14 @@ fn main() -> Result<()>{
                 rating: *rating,
                 rating_type: rating_type
             };
-            println!("{}", rating);
             write_ratings(format!("./db/{}.csv", category), &rating)?;
+            println!("Rating added successfully!");
         },
-        Commands::Show { category } => {
-            let ratings = read_ratings(format!("./db/{}.csv", category))?;
+        Commands::Show { category , sort} => {
+            let mut ratings = read_ratings(format!("./db/{}.csv", category))?;
+            if *sort {
+                ratings.sort_by_key(|r| std::cmp::Reverse(r.rating))
+            }
             display_ratings(&ratings);
         }
     }

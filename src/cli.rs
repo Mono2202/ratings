@@ -18,5 +18,8 @@ pub enum Commands {
     },
     Show {
         category: String,
+
+        #[arg(short, long)]
+        sort: bool
     },
 }
