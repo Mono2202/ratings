@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use clap::ValueEnum;
 use std::fmt;
 
 #[derive(Debug, Deserialize, Serialize)]
