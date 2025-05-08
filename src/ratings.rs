@@ -4,7 +4,7 @@ use std::fmt;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Rating {
     pub name: String,
-    pub rating: i8,
+    pub score: i8,
 
     #[serde(flatten)]
     pub rating_type: RatingType,
@@ -25,7 +25,7 @@ impl Rating {
     pub fn to_csv_record(&self) -> Vec<String> {
         let mut csv_record = vec![
             self.name.clone(),
-            self.rating.to_string(),
+            self.score.to_string(),
         ];
 
         match &self.rating_type {
@@ -55,12 +55,12 @@ pub fn display_ratings(ratings: &Vec<Rating>) {
     for rating in ratings {
         let stars = format!(
             "{}{}",
-            "★ ".repeat(rating.rating as usize),
-            "☆ ".repeat(10 - rating.rating as usize)
+            "★ ".repeat(rating.score as usize),
+            "☆ ".repeat(10 - rating.score as usize)
         );
         let display_rating = format!("{}", rating);
         let padding = max_dislay_rating_len - display_rating.len();
-        let format_rating = format!("{} {} {} [{}]", rating, " ".repeat(padding), stars, rating.rating);
+        let format_rating = format!("{} {} {} [{}]", rating, " ".repeat(padding), stars, rating.score);
         println!("{}\n{}", format_rating, "-".repeat(format_rating.len()))
     }
 }
