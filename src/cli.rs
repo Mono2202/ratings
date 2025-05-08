@@ -2,6 +2,7 @@ use clap::{Parser, Subcommand};
 use crate::csv_handler::{edit_rating, read_ratings, write_ratings, delete_rating};
 use crate::ratings::{display_ratings, Rating, RatingType};
 use anyhow::{Result, anyhow};
+use chrono::prelude::*;
 
 #[derive(Parser)]
 #[command(name="ratings")]
@@ -50,6 +51,7 @@ fn add_command(category: &String, name: &String, score: i8, properties: &Vec<Str
     let rating = Rating {
         name: name.clone(),
         score: score,
+        date: Local::now().format("%d/%m/%Y").to_string(),
         rating_type: rating_type
     };
     write_ratings(format!("./db/{}.csv", category), &rating)
@@ -70,6 +72,7 @@ fn edit_command(category: &String, name: &String, score: i8) -> Result<()> {
             for rating in ratings.iter_mut() {
                 if &rating.name == name {
                     rating.score = score;
+                    rating.date = Local::now().format("%d/%m/%Y").to_string();
                     edit_rating(format!("./db/{}.csv", category), &rating)?;
                     break
                 }
