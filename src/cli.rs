@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use crate::csv_handler::{edit_rating, read_ratings, write_ratings};
+use crate::csv_handler::{edit_rating, read_ratings, write_ratings, delete_rating};
 use crate::ratings::{display_ratings, Rating, RatingType};
 use anyhow::{Result, anyhow};
 
@@ -29,6 +29,10 @@ pub enum Commands {
         category: String,
         name: String,
         score: i8
+    },
+    Delete {
+        category: String,
+        name: String,
     }
 }
 
@@ -37,6 +41,7 @@ pub fn handle_command(command: &Commands) -> Result<()> {
         Commands::Add {category, name, score, properties} => add_command(category, name, *score, properties),
         Commands::Show {category, sort} => show_command(category, *sort),
         Commands::Edit {category, name, score} => edit_command(category, name, *score),
+        Commands::Delete {category, name} => delete_command(category, name),
     }
 }
 
@@ -66,6 +71,18 @@ fn edit_command(category: &String, name: &String, score: i8) -> Result<()> {
                 if &rating.name == name {
                     rating.score = score;
                     edit_rating(format!("./db/{}.csv", category), &rating)?;
+                    break
+                }
+            }
+
+            Ok(())
+}
+
+fn delete_command(category: &String, name: &String) -> Result<()> {
+            let mut ratings = read_ratings(format!("./db/{}.csv", category))?;
+            for rating in ratings.iter_mut() {
+                if &rating.name == name {
+                    delete_rating(format!("./db/{}.csv", category), &rating)?;
                     break
                 }
             }

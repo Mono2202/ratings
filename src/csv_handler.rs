@@ -29,6 +29,11 @@ pub fn write_ratings<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
 }
 
 pub fn edit_rating<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
+    delete_rating(&path, rating)?;
+    write_ratings(&path, rating)
+}
+
+pub fn delete_rating<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
     let ratings_file = File::open(&path).with_context(|| format!("Failed to open ratings file: {}", path.as_ref().display()))?;
     let reader = BufReader::new(ratings_file);
 
@@ -44,5 +49,5 @@ pub fn edit_rating<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
         writeln!(ratings_file, "{}", line)?;
     }
 
-    write_ratings(path, rating)
+    Ok(())
 }
