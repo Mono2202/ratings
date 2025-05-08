@@ -4,7 +4,7 @@ mod cli;
 
 use anyhow::{Result, anyhow};
 use clap::Parser;
-use csv_handler::{read_ratings, write_ratings};
+use csv_handler::{edit_rating, read_ratings, write_ratings};
 use ratings::{display_ratings, Rating, RatingType};
 use cli::{Cli, Commands};
 
@@ -28,6 +28,17 @@ fn main() -> Result<()>{
                 ratings.sort_by_key(|r| std::cmp::Reverse(r.rating))
             }
             display_ratings(&ratings);
+        }
+        Commands::Edit { category, name, score } => {
+            let mut ratings = read_ratings(format!("./db/{}.csv", category))?;
+            for rating in ratings.iter_mut() {
+                if &rating.name == name {
+                    rating.rating = *score;
+                    edit_rating(format!("./db/{}.csv", category), &rating)?;
+                    println!("Rating edited successfully!");
+                    break
+                }
+            }
         }
     }
 

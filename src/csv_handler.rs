@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs::{File, OpenOptions};
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use csv;
 
@@ -25,4 +26,23 @@ pub fn write_ratings<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
     csv_writer.serialize(&rating.to_csv_record()).with_context(|| format!("Failed to serialize a record to the CSV"))?;
     csv_writer.flush().with_context(|| format!("Failed to flush CSV file"))?;
     Ok(())
+}
+
+pub fn edit_rating<P: AsRef<Path>>(path: P, rating: &Rating) -> Result<()> {
+    let ratings_file = File::open(&path).with_context(|| format!("Failed to open ratings file: {}", path.as_ref().display()))?;
+    let reader = BufReader::new(ratings_file);
+
+    let lines: Vec<String>= reader
+    .lines()
+    .filter_map(Result::ok)
+    .filter(|line| !line.starts_with(&rating.name))
+    .collect();
+
+    let mut ratings_file = File::create(&path).with_context(|| format!("Failed to create ratings file: {}", path.as_ref().display()))?;
+    for line in lines {
+        // TODO: add context to all unwraps
+        writeln!(ratings_file, "{}", line)?;
+    }
+
+    write_ratings(path, rating)
 }

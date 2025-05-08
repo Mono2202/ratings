@@ -60,7 +60,7 @@ pub fn display_ratings(ratings: &Vec<Rating>) {
         );
         let display_rating = format!("{}", rating);
         let padding = max_dislay_rating_len - display_rating.len();
-        let format_rating = format!("{} {} {}", rating, " ".repeat(padding), stars);
+        let format_rating = format!("{} {} {} [{}]", rating, " ".repeat(padding), stars, rating.rating);
         println!("{}\n{}", format_rating, "-".repeat(format_rating.len()))
     }
 }

@@ -22,4 +22,9 @@ pub enum Commands {
         #[arg(short, long)]
         sort: bool
     },
+    Edit {
+        category: String,
+        name: String,
+        score: i8
+    }
 }
