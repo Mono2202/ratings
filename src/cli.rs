@@ -72,6 +72,7 @@ fn edit_command(category: &String, name: &String, score: i8) -> Result<()> {
             for rating in ratings.iter_mut() {
                 if &rating.name == name {
                     rating.score = score;
+                    // TODO: not sure if I want to update the date
                     rating.date = Local::now().format("%d/%m/%Y").to_string();
                     edit_rating(format!("./db/{}.csv", category), &rating)?;
                     break
